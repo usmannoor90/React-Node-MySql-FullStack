@@ -4,9 +4,11 @@ import Header from "./Header";
 
 function AccountLayout() {
   return (
-    <div className="min-h-screen w-full max-w-[1200px] mx-auto">
+    <div className="min-h-screen w-full max-w-[1200px] mx-auto px-4">
       <Header />
-      <Outlet />
+      <div className="mt-[3rem]">
+        <Outlet />
+      </div>
     </div>
   );
 }
