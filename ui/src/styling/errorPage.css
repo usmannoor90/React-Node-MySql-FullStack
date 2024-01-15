@@ -1,0 +1,258 @@
+@keyframes drawLine1 {
+  0% {
+    stroke-dashoffset: -940px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes drawLine2 {
+  0% {
+    stroke-dashoffset: -735px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes drawLine3 {
+  0% {
+    stroke-dashoffset: -940px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes flicker1 {
+  0% {
+    stroke: #34acf4;
+  }
+  1% {
+    stroke: transparent;
+  }
+  3% {
+    stroke: transparent;
+  }
+  4% {
+    stroke: #34acf4;
+  }
+  6% {
+    stroke: #34acf4;
+  }
+  7% {
+    stroke: transparent;
+  }
+  13% {
+    stroke: transparent;
+  }
+  14% {
+    stroke: #34acf4;
+  }
+  100% {
+    stroke: #34acf4;
+  }
+}
+
+@keyframes flicker2 {
+  0% {
+    stroke: #34acf4;
+  }
+  50% {
+    stroke: #34acf4;
+  }
+  51% {
+    stroke: transparent;
+  }
+  61% {
+    stroke: transparent;
+  }
+  62% {
+    stroke: #34acf4;
+  }
+  100% {
+    stroke: #34acf4;
+  }
+}
+
+@keyframes flicker3 {
+  0% {
+    stroke: #34acf4;
+  }
+  1% {
+    stroke: transparent;
+  }
+  10% {
+    stroke: transparent;
+  }
+  11% {
+    stroke: #34acf4;
+  }
+  40% {
+    stroke: #34acf4;
+  }
+  41% {
+    stroke: transparent;
+  }
+  45% {
+    stroke: transparent;
+  }
+  46% {
+    stroke: #34acf4;
+  }
+  100% {
+    stroke: #34acf4;
+  }
+}
+
+@keyframes flicker4 {
+  0% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+  }
+  30% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+  }
+  31% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+  }
+  32% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+  }
+  36% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+  }
+  37% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+  }
+  41% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+  }
+  42% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+  }
+  85% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+  }
+  86% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+  }
+  95% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+  }
+  96% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+  }
+  100% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+  }
+}
+@keyframes flickerButton {
+  0% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+    border-color: #34acf4;
+  }
+  30% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+    border-color: #34acf4;
+  }
+  31% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+    border-color: #12000a;
+  }
+  32% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+    border-color: #34acf4;
+  }
+  36% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+    border-color: #34acf4;
+  }
+  37% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+    border-color: #12000a;
+  }
+  41% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+  }
+  42% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+    border-color: #34acf4;
+  }
+  85% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+    border-color: #34acf4;
+  }
+  86% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+    border-color: #12000a;
+  }
+  95% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+    border-color: #12000a;
+  }
+  96% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+    border-color: #34acf4;
+  }
+  100% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+    border-color: #34acf4;
+  }
+}
+
+@keyframes fadeInText {
+  1% {
+    color: #12000a;
+    text-shadow: 0px 0px 4px #12000a;
+  }
+  70% {
+    color: #34acf4;
+    text-shadow: 0px 0px 14px #34acf4;
+  }
+  100% {
+    color: #34acf4;
+    text-shadow: 0px 0px 4px #34acf4;
+  }
+}
+
+@keyframes buttonAnimate {
+  1% {
+    color: #12000a;
+    border-color: #12000a;
+  }
+  70% {
+    color: #34acf4;
+    border-color: #34acf4;
+  }
+  100% {
+    color: #12000a;
+    border-color: #12000a;
+  }
+}

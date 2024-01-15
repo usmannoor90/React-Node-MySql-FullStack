@@ -1,0 +1,43 @@
+.Faqs {
+  position: relative;
+  z-index: 1;
+  border-top: 10px solid black;
+  border-bottom: 10px solid black;
+}
+
+.Faqs::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    110deg,
+    rgba(63, 20, 194, 0.14) 30%,
+    rgba(27, 86, 140, 0) 50%,
+    rgba(52, 172, 244, 0.2) 91%
+  );
+  filter: blur(3px);
+  z-index: 0;
+}
+
+.carouselSection {
+  background: url(../pictures/carouselWavyBackImg.png) center no-repeat;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+}
+.maketablerounede thead tr:last-child td:last-child {
+  border-top-right-radius: 20px;
+}
+.maketablerounede thead tr:last-child td:first-child {
+  border-top-left-radius: 20px;
+}
+.maketablerounede tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 20px;
+}
+
+.maketablerounede tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 20px;
+}

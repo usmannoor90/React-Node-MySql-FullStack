@@ -1,0 +1,47 @@
+@keyframes airplaneS {
+  0%,
+  100% {
+    left: 45%;
+    top: 30%;
+  }
+  24% {
+    left: 45%;
+    top: 30%;
+  }
+  25% {
+    top: 31%;
+    left: 42%;
+  }
+  49% {
+    top: 31%;
+    left: 42%;
+  }
+  50% {
+    top: 33%;
+    left: 44%;
+  }
+  74% {
+    top: 33%;
+    left: 44%;
+  }
+  75% {
+    top: 30%;
+    left: 41%;
+  }
+  99% {
+    top: 30%;
+    left: 41%;
+  }
+}
+
+@keyframe lines {
+  0%,
+  100% {
+    left: 32%;
+    top: 43%;
+  }
+  50% {
+    left: 33%;
+    top: 42%;
+  }
+}
