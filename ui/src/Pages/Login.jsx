@@ -4,8 +4,15 @@ import loginIcon from "../pics/LoginIcon.svg";
 import inputUserIcon from "../pics/loginInputUsetIcon.svg";
 import inputpassIcon from "../pics/loginInputPass.svg";
 import { useForm } from "react-hook-form";
+import API from ".././api";
+
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setLogin } from "../State/AuthSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
     register,
@@ -13,9 +20,45 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    navigate("/home");
+  const onSubmit = async (data) => {
     console.log(data);
+
+    const formdata = new FormData();
+    formdata.append("email", data?.email);
+    formdata.append("password", data?.password);
+    try {
+      await axios
+        .post(`${API}userauth/login`, formdata)
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            dispatch(
+              setLogin({
+                email: data?.email,
+                token: res.data.token,
+              })
+            );
+            navigate("/home");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.data.error) {
+            toast(`${err.response.data.error}`, {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            });
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

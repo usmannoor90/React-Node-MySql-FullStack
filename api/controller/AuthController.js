@@ -40,21 +40,20 @@ const SingupUser = async (req, res) => {
       salt,
     ]);
 
-    // Generate a JWT token for the new user
-    const token = jwt.sign(
-      { userId: result.insertId, username, email },
-      "sdfkhk12k",
-      { expiresIn: "1h" }
-    );
+    // // Generate a JWT token for the new user
+    // const token = jwt.sign(
+    //   { userId: result.insertId, username, email },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "1h" }
+    // );
 
-    res.status(200).json({ token });
+    res.status(200).json("please check your email");
   } catch (error) {
     console.error("Signup error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-//add a department
 const LoginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -87,11 +86,9 @@ const LoginUser = async (req, res) => {
     }
 
     // Generate a JWT token for the logged-in user
-    const token = jwt.sign(
-      { userId: user.id, username: user.username, email },
-      `sdfkhk12k`,
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ userId: user.id, email }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.status(200).json({ token });
   } catch (error) {

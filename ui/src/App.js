@@ -8,6 +8,7 @@ import Department from "./Pages/Department";
 import Employee from "./Pages/Employee";
 import Loading from "./Pages/Loading";
 import ErrorPage from "./Pages/ErrorPage";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (

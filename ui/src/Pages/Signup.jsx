@@ -7,6 +7,9 @@ import inputpassIcon from "../pics/loginInputPass.svg";
 import inputemailicon from "../pics/REGISTERemailicon.svg";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import API from "../api";
+import { toast } from "react-toastify";
 
 function Signup() {
   const navigate = useNavigate();
@@ -18,9 +21,41 @@ function Signup() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    navigate("/");
+  const onSubmit = async (data) => {
+    // navigate("/");
     console.log(data);
+
+    const formdata = new FormData();
+    formdata.append("username", data?.username);
+    formdata.append("email", data?.email);
+    formdata.append("password", data?.password);
+    try {
+      await axios
+        .post(`${API}userauth/signup`, formdata)
+        .then((res) => {
+          // console.log(res);
+          if (res.status === 200) {
+            navigate("/");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.data.error) {
+            toast(`${err.response.data.error}`, {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            });
+          }
+        });
+    } catch (error) {
+      // console.log(error);
+    }
   };
 
   return (

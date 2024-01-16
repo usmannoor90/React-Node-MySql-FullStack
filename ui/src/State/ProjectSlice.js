@@ -9,10 +9,14 @@ export const authSlice = createSlice({
   name: "project",
   initialState: initialState,
 
-  reducers: {},
+  reducers: {
+    AllEmployee: (state, action) => {
+      state.employee = action.payload.employee;
+    },
+  },
 });
 
 // Action creators are generated for each case reducer function
-export const {} = authSlice.actions;
+export const { AllEmployee } = authSlice.actions;
 
 export default authSlice.reducer;
