@@ -7,7 +7,24 @@ const SingupUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Generate a salt
+    const emailExistsQuery = "SELECT * FROM users where email=?";
+    // Use async/await with a Promise to wait for the query to complete
+    const existingUser = await new Promise((resolve, reject) => {
+      connection.query(emailExistsQuery, [email], (err, results, fields) => {
+        if (err) {
+          console.error(err.message);
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+
+    console.log(existingUser);
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
 
@@ -26,7 +43,7 @@ const SingupUser = async (req, res) => {
     // Generate a JWT token for the new user
     const token = jwt.sign(
       { userId: result.insertId, username, email },
-      process.env.JWT_SECRET,
+      "sdfkhk12k",
       { expiresIn: "1h" }
     );
 
@@ -45,34 +62,41 @@ const LoginUser = async (req, res) => {
     // Check if the user exists in the database
     const selectQuery = "SELECT * FROM users where email=?";
 
-    const queryResult = await connection.query(selectQuery, [email]);
+    const existingUser = await new Promise((resolve, reject) => {
+      connection.query(selectQuery, [email], (err, results, fields) => {
+        if (err) {
+          console.error(err.message);
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
 
-    if (!queryResult.values || queryResult.length === 0) {
+    if (existingUser.length === 0) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
-    console.log(queryResult.values[0]);
 
-    res.status(200).json({ id: "message" });
+    const user = existingUser[0];
 
-    // const user = queryResult[0];
+    // Compare the provided password with the stored hashed password
+    const passwordMatch = await bcrypt.compare(password, user.password);
 
-    // const hashedPassword = await bcrypt.hash(password, user.salt);
-    // const passwordMatch = await bcrypt.compare(hashedPassword, user.password);
-    // if (!passwordMatch) {
-    //   return res.status(401).json({ error: "Invalid credentials" });
-    // }
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
 
-    // // Generate a JWT token for the logged-in user
-    // const token = jwt.sign(
-    //   { userId: user[0].id, username: user[0].username, email },
-    //   `${process.env.JWT_SECRET}`,
-    //   { expiresIn: "1h" }
-    // );
+    // Generate a JWT token for the logged-in user
+    const token = jwt.sign(
+      { userId: user.id, username: user.username, email },
+      `sdfkhk12k`,
+      { expiresIn: "1h" }
+    );
 
-    // res.status(200).json({ token });
+    res.status(200).json({ token });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ error: "Internal Server Error " });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
