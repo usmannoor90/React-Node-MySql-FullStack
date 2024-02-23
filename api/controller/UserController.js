@@ -105,6 +105,78 @@ const ChangePassword = async (req, res, next) => {
   }
 };
 
+const GettAllUserSetting = async (req, res, next) => {
+  try {
+    const selectQuery = "SELECT * FROM users ";
+    const existingUser = await new Promise((resolve, reject) => {
+      connection.query(selectQuery, (err, results, fields) => {
+        if (err) {
+          console.error(err.message);
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+
+    console.log(existingUser);
+    res.status(200).json({
+      data: {
+        user: existingUser,
+        message: "Wallet address added successfully",
+      },
+    });
+  } catch (error) {
+    console.error("Signup error:", error);
+    const er = new CustomError(
+      error.Message || "Internal Server Error",
+      error.errorCode || 5003,
+      error.Success || false,
+      error.StatusCode || 500
+    );
+    next(er);
+  }
+};
+
+const UpdateSettingUser = async (req, res, next) => {
+  try {
+    const { user_id, email } = req.body;
+
+    const selectQuery = "SELECT * FROM users where user_id=? and email=? ";
+    const existingUser = await new Promise((resolve, reject) => {
+      connection.query(
+        selectQuery,
+        [user_id, email],
+        (err, results, fields) => {
+          if (err) {
+            console.error(err.message);
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        }
+      );
+    });
+
+    console.log(existingUser);
+    res.status(200).json({
+      data: {
+        user: existingUser,
+        message: "Wallet address added successfully",
+      },
+    });
+  } catch (error) {
+    console.error("Signup error:", error);
+    const er = new CustomError(
+      error.Message || "Internal Server Error",
+      error.errorCode || 5003,
+      error.Success || false,
+      error.StatusCode || 500
+    );
+    next(er);
+  }
+};
+
 const GettUserSetting = async (req, res, next) => {
   try {
     const token = req.headers["authorization"];
@@ -151,6 +223,7 @@ const GettUserSetting = async (req, res, next) => {
           city: existingUser[0].city,
           country: existingUser[0].country,
           contact: existingUser[0].contact,
+          dateofJoing: existingUser[0].dateofjoining,
         },
         message: "Wallet address added successfully",
       },
@@ -188,6 +261,7 @@ const CheckIn = async (req, res, next) => {
     }
 
     const { email, userId } = decoded;
+    const workplace = req.body.workplace; // Assuming workplace is sent in the request body
 
     // Check if the user has already checked in on the current day
     const existingCheckinQuery = `
@@ -217,19 +291,23 @@ const CheckIn = async (req, res, next) => {
 
     // If not already checked in today, proceed with the check-in
     const insertQuery = `
-      INSERT INTO checkinout (user_id, checkin_time, start_time)
-      VALUES (?, NOW(), NOW())
-    `;
+    INSERT INTO checkinout (user_id, checkin_time, start_time, workplace)
+    VALUES (?, NOW(), NOW(), ?)
+  `;
 
     await new Promise((resolve, reject) => {
-      connection.query(insertQuery, [userId], (err, results, fields) => {
-        if (err) {
-          console.error(err.message);
-          reject(err);
-        } else {
-          resolve(results);
+      connection.query(
+        insertQuery,
+        [userId, workplace],
+        (err, results, fields) => {
+          if (err) {
+            console.error(err.message);
+            reject(err);
+          } else {
+            resolve(results);
+          }
         }
-      });
+      );
     });
 
     res.status(200).json({ success: true, message: "Check-in successful" });
@@ -538,4 +616,6 @@ module.exports = {
   StopTime,
   ResumeTime,
   CheckOut,
+  GettAllUserSetting,
+  UpdateSettingUser,
 };

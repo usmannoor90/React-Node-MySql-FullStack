@@ -1,39 +1,20 @@
 import React from "react";
 
-import department from "../pics/departments.jpg";
-import employee from "../pics/emplyees.jpg";
-import { Link } from "react-router-dom";
-
 function Home() {
   return (
-    <div className="grid md:grid-cols-2 grid-cols-1 gap-4 ">
-      <Link
-        to={"/department"}
-        className="card  bg-base-100 shadow-xl image-full"
-      >
-        <figure>
-          <img src={department} alt="Shoes" />
-        </figure>
-        <div className="card-body">
-          <h2 className="card-title">Departments</h2>
-          <p>see all the Departments</p>
-          <div className="card-actions justify-end">
-            <button className="btn btn-primary">Departments</button>
-          </div>
+    <div className=" flex items-start justify-center w-full   ">
+      <div className=" w-[800px]  bg-white rounded-2xl p-10  flex items-center justify-between gap-4 ">
+        <div className=" flex flex-col items-center justify-center gap-3   ">
+          <h2>2024</h2>
+          <button className=" btn btn-success   ">check in</button>
+          <button className=" btn btn-error   ">check out</button>
         </div>
-      </Link>
-      <Link to={"/employee"} className="card  bg-base-100 shadow-xl image-full">
-        <figure>
-          <img src={employee} alt="Shoes" />
-        </figure>
-        <div className="card-body">
-          <h2 className="card-title">Employees</h2>
-          <p>see all the Employees</p>
-          <div className="card-actions justify-end">
-            <button className="btn btn-primary">Employess</button>
-          </div>
+        <div className=" flex flex-col gap-3 ">
+          <textarea name="" id="" className=" h-24 w-[300px]   "></textarea>
+          <button className=" btn btn-warning  ">stop time(for break)</button>
+          <button className=" btn btn-info  ">resume time(after break)</button>
         </div>
-      </Link>
+      </div>
     </div>
   );
 }

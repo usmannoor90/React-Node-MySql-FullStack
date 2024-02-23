@@ -3,11 +3,11 @@
 @tailwind utilities;
 @tailwind variants;
 
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: Lexend, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -15,4 +15,27 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+body,
+html,
+#root {
+  overflow-x: hidden;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+@layer components {
+  .CustomDashNavLink {
+    @apply text-[20px]  leading-[25px] tracking-normal text-left  capitalize text-[black] font-light p-1 bg-transparent;
+  }
+  .CustomDashActiveNavLink {
+    @apply !text-white font-light !bg-[#db49ff];
+  }
 }
