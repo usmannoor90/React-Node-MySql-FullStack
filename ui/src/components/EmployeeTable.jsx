@@ -11,6 +11,10 @@ import {
   getPaginationRowModel,
 } from "@tanstack/react-table";
 import { rankItem } from "@tanstack/match-sorter-utils";
+import axios from "axios";
+import API from "../api";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 function EmployeeTable({ Data }) {
   const [data] = useState(Data);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -56,7 +60,10 @@ function EmployeeTable({ Data }) {
     columnHelper.accessor("Delete", {
       cell: (info) => {
         return (
-          <button className="flex items-center capitalize btn-error btn text-white mx-auto">
+          <button
+            className="flex items-center capitalize btn-error btn text-white mx-auto"
+            onClick={() => handleDeleteEmployee(info.row.original)}
+          >
             <MdOutlineDeleteOutline className="" size={25} />
             Delete
           </button>
@@ -64,6 +71,53 @@ function EmployeeTable({ Data }) {
       },
     }),
   ];
+
+  const { token } = useSelector((state) => state.auth);
+
+  const handleDeleteEmployee = async (data) => {
+    console.log(data);
+    try {
+      await axios
+        .delete(
+          `${API}employee/${data?.EmployeeId}/`,
+
+          { headers: { Authorization: token } }
+        )
+        .then((res) => {
+          console.log(res);
+          if (res.data) {
+            toast(`${res.data}`, {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.data.error) {
+            toast(`${err.response.data.error}`, {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            });
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const table = useReactTable({
     data,
     columns,

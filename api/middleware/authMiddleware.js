@@ -1,25 +1,41 @@
 const jwt = require("jsonwebtoken");
+const { CustomError } = require("./errorMiddleware");
 require("dotenv").config();
 
 function authenticateToken(req, res, next) {
-  const token = req.headers["authorization"];
+  try {
+    const token = req.headers["authorization"];
 
-  console.log(token);
+    // console.log(token);
 
-  if (!token) {
-    return res.status(401).json({ error: "Unauthorized: Token not provided" });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
-    console.log("Error during token verification:", err);
-    console.log("Decoded user information:", decoded);
-    if (err !== null) {
-      return res.status(403).json({ error: "Forbidden: Invalid token" });
+    if (!token) {
+      throw new CustomError(
+        "Unauthorized: Token not provided",
+        4001,
+        false,
+        401
+      );
     }
 
-    req.user = decoded;
-  });
-  next();
+    jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
+      console.log("Error during token verification:", err);
+      console.log("Decoded user information:", decoded);
+      if (err !== null) {
+        throw new CustomError("Forbidden: Invalid token", 4003, false, 401);
+      }
+
+      req.user = decoded;
+    });
+    next();
+  } catch (error) {
+    const er = new CustomError(
+      error.Message || "Internal Server Error",
+      error.errorCode || 5002,
+      error.Success || false,
+      error.StatusCode || 500
+    );
+    next(er);
+  }
 }
 
 module.exports = authenticateToken;

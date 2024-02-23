@@ -1,6 +1,6 @@
 //get method for getting all the departments
 
-const connection = require("../db");
+const { connection } = require("../db");
 
 const GetallDepartments = async (req, res) => {
   connection.query(`SELECT * from Department`, (err, rows, fields) => {

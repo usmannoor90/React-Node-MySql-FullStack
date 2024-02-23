@@ -1,6 +1,6 @@
 //get method for getting all the departments
 
-const connection = require("../db");
+const { connection } = require("../db");
 const fs = require("fs");
 
 const Getalleployees = async (req, res) => {

@@ -1,12 +1,23 @@
 const mysql = require("mysql");
 
-const connection = mysql.createConnection({
+const config = {
   host: "127.0.0.1",
   user: "root",
   password: "admin",
   database: "mysqldb",
   multipleStatements: true,
-});
+};
+const poolConfig = {
+  host: "127.0.0.1",
+  user: "root",
+  password: "admin",
+  database: "mysqldb",
+  connectionLimit: 15,
+};
+
+const connection = mysql.createConnection(config);
+
+const pool = mysql.createPool(poolConfig);
 
 connection.connect((err) => {
   if (!err) {
@@ -18,4 +29,4 @@ connection.connect((err) => {
   }
 });
 
-module.exports = connection;
+module.exports = { connection, pool };
