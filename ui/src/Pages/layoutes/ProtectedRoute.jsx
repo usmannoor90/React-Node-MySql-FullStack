@@ -12,7 +12,7 @@ function ProtectedRoute() {
     auth = false;
   }
 
-  return !auth ? <Outlet /> : <Navigate to={"/"} replace />;
+  return auth ? <Outlet /> : <Navigate to={"/"} replace />;
 }
 
 export default ProtectedRoute;

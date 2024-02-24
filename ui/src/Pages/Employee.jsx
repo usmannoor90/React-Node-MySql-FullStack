@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import API from "../api";
+
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { AllEmployee } from "../State/ProjectSlice";
@@ -16,39 +16,7 @@ function Employee() {
     formState: { errors },
   } = useForm();
 
-  const GetEmployee = async () => {
-    try {
-      await axios
-        .get(`${API}employee/all/`, { headers: { Authorization: token } })
-        .then((res) => {
-          // console.log(res);
-          if (res.status === 200) {
-            dispatch(
-              AllEmployee({
-                employee: res.data,
-              })
-            );
-          }
-        })
-        .catch((err) => {
-          // console.log(err);
-          if (err.response.data.error) {
-            toast(`${err.response.data.error}`, {
-              position: "bottom-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          }
-        });
-    } catch (error) {
-      // console.log(error);
-    }
-  };
+  const GetEmployee = async () => {};
 
   useEffect(() => {
     GetEmployee();
@@ -56,53 +24,7 @@ function Employee() {
 
   const { employee } = useSelector((state) => state.project);
 
-  const AddEmployee = async (data) => {
-    try {
-      await axios
-        .post(
-          `${API}employee/add/`,
-          {
-            employeeName: data?.employeeName,
-            departmeent: data?.departmeent,
-            dateOfJoining: data?.dateOfJoining,
-          },
-          { headers: { Authorization: token } }
-        )
-        .then((res) => {
-          console.log(res);
-          document.getElementById("my_modal_1").close();
-          if (res.data) {
-            toast(`${res.data}`, {
-              position: "bottom-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.response.data.error) {
-            toast(`${err.response.data.error}`, {
-              position: "bottom-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          }
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const AddEmployee = async (data) => {};
 
   const AddEmployeeModal = () => {
     return (

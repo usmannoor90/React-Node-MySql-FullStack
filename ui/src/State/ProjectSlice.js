@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   employee: [],
-  departments: [],
 };
 
 export const authSlice = createSlice({

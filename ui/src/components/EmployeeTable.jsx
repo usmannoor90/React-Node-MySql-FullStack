@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { rankItem } from "@tanstack/match-sorter-utils";
 import axios from "axios";
-import API from "../api";
+
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 function EmployeeTable({ Data }) {
@@ -76,46 +76,6 @@ function EmployeeTable({ Data }) {
 
   const handleDeleteEmployee = async (data) => {
     console.log(data);
-    try {
-      await axios
-        .delete(
-          `${API}employee/${data?.EmployeeId}/`,
-
-          { headers: { Authorization: token } }
-        )
-        .then((res) => {
-          console.log(res);
-          if (res.data) {
-            toast(`${res.data}`, {
-              position: "bottom-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.response.data.error) {
-            toast(`${err.response.data.error}`, {
-              position: "bottom-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          }
-        });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const table = useReactTable({

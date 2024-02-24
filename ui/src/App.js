@@ -10,6 +10,8 @@ import ErrorPage from "./Pages/ErrorPage";
 import "react-toastify/dist/ReactToastify.css";
 import DashboardLayout from "./Pages/layoutes/DashboardLayout";
 import ProtectedRoute from "./Pages/layoutes/ProtectedRoute";
+import Profile from "./Pages/Profile";
+import History from "./Pages/History";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="dashboard/" element={<DashboardLayout />}>
               <Route path="signup/" element={<Signup />} />
+              <Route path="profile/" element={<Profile />} />
+              <Route path="history/" element={<History />} />
               <Route path="home/" element={<Home />} />
               <Route path="employee/" element={<Employee />} />
               <Route path="*" element={<ErrorPage />} />

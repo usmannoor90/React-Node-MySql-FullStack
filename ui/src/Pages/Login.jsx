@@ -4,61 +4,29 @@ import loginIcon from "../pics/LoginIcon.svg";
 import inputUserIcon from "../pics/loginInputUsetIcon.svg";
 import inputpassIcon from "../pics/loginInputPass.svg";
 import { useForm } from "react-hook-form";
-import API from ".././api";
 
-import axios from "axios";
-import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
+import { LoginAPI } from "../API/AccountApiLayer";
 import { setLogin } from "../State/AuthSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { loading } = useSelector((state) => state.apiLoading);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
-    console.log(data);
-
-    const formdata = new FormData();
-    formdata.append("email", data?.email);
-    formdata.append("password", data?.password);
-    try {
-      await axios
-        .post(`${API}userauth/login`, formdata)
-        .then((res) => {
-          console.log(res);
-          if (res.status === 200) {
-            dispatch(
-              setLogin({
-                email: data?.email,
-                token: res.data.token,
-              })
-            );
-            navigate("/home");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.response.data.error) {
-            toast(`${err.response.data.error}`, {
-              position: "bottom-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          }
-        });
-    } catch (error) {
-      console.log(error);
-    }
+  const onSubmit = async (d) => {
+    LoginAPI.POSTLogin(d)
+      .then((res) => {
+        dispatch(setLogin({ data: res.data.data }));
+        navigate("/dashboard/home");
+      })
+      .catch((err) => {});
   };
 
   return (
@@ -119,6 +87,7 @@ const Login = () => {
           </div>
           <button
             type="submit"
+            disabled={loading ? true : false}
             className="bg-[linear-gradient(90deg,rgba(63,_20,_194,_1),rgba(141,_73,_182,_1))] text-white rounded-[8px] px-5 py-3 capitalize transition-all ease-linear duration-300 hover:[filter:drop-shadow(0px_0px_7px_#8D49B6)] mt-12 font-light w-full text-center customFirstPara"
           >
             Login

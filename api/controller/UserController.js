@@ -105,7 +105,7 @@ const ChangePassword = async (req, res, next) => {
   }
 };
 
-const GettAllUserSetting = async (req, res, next) => {
+const GettAllUser = async (req, res, next) => {
   try {
     const selectQuery = "SELECT * FROM users ";
     const existingUser = await new Promise((resolve, reject) => {
@@ -239,6 +239,58 @@ const GettUserSetting = async (req, res, next) => {
     next(er);
   }
 };
+const GetUserHistory = async (req, res, next) => {
+  try {
+    const token = req.headers["authorization"];
+
+    if (!token) {
+      throw new CustomError(
+        "Unauthorized: Token not provided",
+        1002,
+        false,
+        400
+      );
+    }
+
+    const token1 = token.split(" ")[0];
+    const decoded = jwt.verify(token1, process.env.JWT_SECRET);
+
+    if (!decoded) {
+      throw new CustomError("Unauthorized: Invalid token", 1002, false, 400);
+    }
+    const { Email, userId } = decoded;
+
+    // Fetch all checkinout data for the specified user
+    const selectCheckinoutQuery = "SELECT * FROM checkinout WHERE user_id=?";
+    const checkinoutData = await new Promise((resolve, reject) => {
+      connection.query(
+        selectCheckinoutQuery,
+        [userId],
+        (err, results, fields) => {
+          if (err) {
+            console.error(err.message);
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        }
+      );
+    });
+
+    res.status(200).json({
+      data: checkinoutData,
+    });
+  } catch (error) {
+    console.error("Signup error:", error);
+    const er = new CustomError(
+      error.Message || "Internal Server Error",
+      error.errorCode || 5003,
+      error.Success || false,
+      error.StatusCode || 500
+    );
+    next(er);
+  }
+};
 
 const CheckIn = async (req, res, next) => {
   try {
@@ -261,9 +313,8 @@ const CheckIn = async (req, res, next) => {
     }
 
     const { email, userId } = decoded;
-    const workplace = req.body.workplace; // Assuming workplace is sent in the request body
+    const { workplace } = req.body;
 
-    // Check if the user has already checked in on the current day
     const existingCheckinQuery = `
       SELECT checkin_id
       FROM checkinout
@@ -288,14 +339,12 @@ const CheckIn = async (req, res, next) => {
     if (existingCheckinResult.length > 0) {
       throw new CustomError("User already checked in today", 1005, false, 400);
     }
-
-    // If not already checked in today, proceed with the check-in
     const insertQuery = `
-    INSERT INTO checkinout (user_id, checkin_time, start_time, workplace)
-    VALUES (?, NOW(), NOW(), ?)
-  `;
+        INSERT INTO checkinout (user_id, checkin_time, start_time, workplace)
+        VALUES (?, NOW(), NOW(), ?)
+    `;
 
-    await new Promise((resolve, reject) => {
+    const insertResult = await new Promise((resolve, reject) => {
       connection.query(
         insertQuery,
         [userId, workplace],
@@ -310,7 +359,37 @@ const CheckIn = async (req, res, next) => {
       );
     });
 
-    res.status(200).json({ success: true, message: "Check-in successful" });
+    // Retrieve checkin_time and start_time from the inserted record
+    const insertedCheckinId = insertResult.insertId; // Assuming checkin_id is auto-incremented
+    const getCheckinCheckoutQuery = `
+        SELECT checkin_time, start_time
+        FROM checkinout
+        WHERE checkin_id = ?
+    `;
+
+    const checkinCheckoutResult = await new Promise((resolve, reject) => {
+      connection.query(
+        getCheckinCheckoutQuery,
+        [insertedCheckinId],
+        (err, results, fields) => {
+          if (err) {
+            console.error(err.message);
+            reject(err);
+          } else {
+            resolve(results[0]); // Assuming only one record is retrieved
+          }
+        }
+      );
+    });
+
+    const { checkin_time, start_time } = checkinCheckoutResult;
+
+    // Respond with the retrieved checkin_time and start_time
+    res.status(200).json({
+      success: true,
+      data: { checkin_time, start_time },
+      message: "Check-in successful",
+    });
   } catch (error) {
     console.error("Signup error:", error);
     const er = new CustomError(
@@ -423,7 +502,7 @@ const StopTime = async (req, res, next) => {
 
     // Insert stop time into StopTimeData table
     const insertStopTimeQuery = `
-      INSERT INTO StopTimeData (checkin_id, stop_time, stop_reason, is_resume)
+      INSERT INTO stoptimedata (checkin_id, stop_time, stop_reason, is_resume)
       VALUES (?, ?, ?, ?)
     `;
 
@@ -612,10 +691,11 @@ const CheckOut = async (req, res, next) => {
 module.exports = {
   ChangePassword,
   GettUserSetting,
+  GetUserHistory,
   CheckIn,
   StopTime,
   ResumeTime,
   CheckOut,
-  GettAllUserSetting,
+  GettAllUser,
   UpdateSettingUser,
 };

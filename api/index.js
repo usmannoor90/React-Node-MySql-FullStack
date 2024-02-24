@@ -16,8 +16,6 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/api/department", authenticateToken);
-app.use("/api/employee", authenticateToken);
 app.use("/api/user", authenticateToken);
 
 app.use("/api", router);

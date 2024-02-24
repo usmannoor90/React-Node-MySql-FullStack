@@ -126,6 +126,7 @@ const LoginUser = async (req, res, next) => {
       email: Joi.string().email().required(),
       password: Joi.string().required(),
     });
+
     // Validate the request body against the schema
     const { error } = schema.validate(req.body);
     if (error) {
@@ -133,10 +134,9 @@ const LoginUser = async (req, res, next) => {
     }
 
     // Check if the user exists in the database
-    const selectQuery = "SELECT * FROM users where email=?";
-
+    const selectUserQuery = "SELECT * FROM users WHERE email=?";
     const existingUser = await new Promise((resolve, reject) => {
-      connection.query(selectQuery, [email], (err, results, fields) => {
+      connection.query(selectUserQuery, [email], (err, results, fields) => {
         if (err) {
           console.error(err.message);
           reject(err);
@@ -159,6 +159,24 @@ const LoginUser = async (req, res, next) => {
       throw new CustomError("Invalid password", 1002, false, 400);
     }
 
+    const currentDate = new Date().toISOString().split("T")[0]; // Get the current date
+    const selectCheckinoutQuery =
+      "SELECT * FROM checkinout WHERE user_id=? AND DATE(checkin_time)=?";
+    const checkinoutData = await new Promise((resolve, reject) => {
+      connection.query(
+        selectCheckinoutQuery,
+        [user.user_id, currentDate],
+        (err, results, fields) => {
+          if (err) {
+            console.error(err.message);
+            reject(err);
+          } else {
+            resolve(results[0]);
+          }
+        }
+      );
+    });
+
     // Generate a JWT token for the logged-in user
     const token = jwt.sign(
       { userId: user.user_id, email, previlage: user.previlage },
@@ -174,6 +192,29 @@ const LoginUser = async (req, res, next) => {
         Email: user.email,
         username: user.username,
         previlage: user.previlage,
+
+        break_hours: checkinoutData.break_hours
+          ? checkinoutData.break_hours
+          : null,
+        checkin_id: checkinoutData.checkin_id
+          ? checkinoutData.checkin_id
+          : null,
+        checkin_time: checkinoutData.checkin_time
+          ? checkinoutData.checkin_time
+          : null,
+        checkout_time: checkinoutData.checkout_time
+          ? checkinoutData.checkout_time
+          : null,
+        present: checkinoutData.present ? checkinoutData.present : null,
+        start_time: checkinoutData.start_time
+          ? checkinoutData.start_time
+          : null,
+        total_hours: checkinoutData.total_hours
+          ? checkinoutData.total_hours
+          : null,
+        user_id: checkinoutData.user_id ? checkinoutData.user_id : null,
+        workplace: checkinoutData.workplace ? checkinoutData.workplace : null,
+        // Include checkinout data in the response
       },
     });
   } catch (error) {

@@ -12,17 +12,19 @@ import {
 import storage from "redux-persist/lib/storage";
 import authReducer from "../State/AuthSlice";
 import projectReducer from "../State/ProjectSlice";
+import apiLoadingReducer from "../State/apiLoadingSlice";
 
 const persistConfig = {
   key: "root",
   storage,
   version: 1,
-  whitelist: ["auth", "project"],
+  whitelist: ["auth", "project", "apiLoading"],
 };
 
 const rootReducer = combineReducers({
   auth: authReducer,
   project: projectReducer,
+  apiLoading: apiLoadingReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
