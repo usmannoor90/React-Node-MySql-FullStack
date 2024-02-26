@@ -22,7 +22,7 @@
 **Client:** React, Redux, TailwindCSS
 
 **Server:** Node, Express
-**Darabase:** MySQL
+**Database:** MySQL
 
 
 
