@@ -7,6 +7,7 @@ const config = {
   database: "mysqldb",
   multipleStatements: true,
 };
+
 const poolConfig = {
   host: "127.0.0.1",
   user: "root",
