@@ -340,8 +340,8 @@ const CheckIn = async (req, res, next) => {
       throw new CustomError("User already checked in today", 1005, false, 400);
     }
     const insertQuery = `
-        INSERT INTO checkinout (user_id, checkin_time, start_time, workplace)
-        VALUES (?, NOW(), NOW(), ?)
+        INSERT INTO checkinout (user_id, checkin_time, start_time, workplace,present)
+        VALUES (?, NOW(), NOW(), ?,true)
     `;
 
     const insertResult = await new Promise((resolve, reject) => {
@@ -404,10 +404,9 @@ const CheckIn = async (req, res, next) => {
 
 const StopTime = async (req, res, next) => {
   try {
-    const { stopTime, stopReason, isResume } = req.body;
+    const { stopReason, isResume } = req.body;
 
     const schema = Joi.object({
-      stopTime: Joi.string().required(),
       stopReason: Joi.string().required(),
       isResume: Joi.boolean().required(),
     });
@@ -445,7 +444,7 @@ const StopTime = async (req, res, next) => {
       throw new CustomError("Unauthorized: Invalid token", 1002, false, 400);
     }
 
-    const { email, userId } = decoded;
+    const { Email, userId } = decoded;
     const checkinIdQuery = `
       SELECT checkin_id
       FROM checkinout
@@ -466,50 +465,19 @@ const StopTime = async (req, res, next) => {
     if (checkinIdResult.length === 0) {
       throw new CustomError("No active check-in found", 1004, false, 400);
     }
-
+    console.log(checkinIdResult);
     const checkinId = checkinIdResult[0].checkin_id;
 
-    // Check if there's already a stop time with is_resume = false
-    const existingStopTimeQuery = `
-      SELECT 1
-      FROM StopTimeData
-      WHERE checkin_id = ? AND is_resume = false
-    `;
-
-    const existingStopTimeResult = await new Promise((resolve, reject) => {
-      connection.query(
-        existingStopTimeQuery,
-        [checkinId],
-        (err, results, fields) => {
-          if (err) {
-            console.error(err.message);
-            reject(err);
-          } else {
-            resolve(results.length > 0);
-          }
-        }
-      );
-    });
-
-    if (existingStopTimeResult && !isResume) {
-      throw new CustomError(
-        "Stop time already recorded, cannot add another",
-        1007,
-        false,
-        400
-      );
-    }
-
-    // Insert stop time into StopTimeData table
+    // Insert stop time into stoptimedata table
     const insertStopTimeQuery = `
-      INSERT INTO stoptimedata (checkin_id, stop_time, stop_reason, is_resume)
-      VALUES (?, ?, ?, ?)
-    `;
+  INSERT INTO stoptimedata (checkin_id, stop_time, stop_reason, is_resume)
+  VALUES (?, NOW(), ?, ?)
+`;
 
     await new Promise((resolve, reject) => {
       connection.query(
         insertStopTimeQuery,
-        [checkinId, stopTime, stopReason, isResume],
+        [checkinId, stopReason, isResume],
         (err, results, fields) => {
           if (err) {
             console.error(err.message);
@@ -520,7 +488,6 @@ const StopTime = async (req, res, next) => {
         }
       );
     });
-
     res.status(200).json({ success: true, message: "Stop time recorded" });
   } catch (error) {
     console.error("Signup error:", error);
@@ -555,7 +522,7 @@ const ResumeTime = async (req, res, next) => {
     }
 
     const { email, userId } = decoded;
-    const { stopTime } = req.body; // Assuming you have the stopTime in the request body
+    const { isResume } = req.body; // Assuming you have the stopTime in the request body
 
     // Fetch the current check-in record for the user
     const checkinQuery = `
@@ -583,10 +550,10 @@ const ResumeTime = async (req, res, next) => {
 
     // Calculate break_hours
     const updateQuery = `
-    UPDATE checkinout
-  SET start_time = NOW(),
-      break_hours = TIMESTAMPDIFF(SECOND, start_time, NOW()) / 3600
-  WHERE user_id = ? AND checkout_time IS NULL
+  UPDATE checkinout
+SET start_time = NOW(),
+    break_minutes = TIMESTAMPDIFF(MINUTE, start_time, NOW())
+WHERE user_id = ? AND checkout_time IS NULL;
     `;
 
     await new Promise((resolve, reject) => {
@@ -600,17 +567,16 @@ const ResumeTime = async (req, res, next) => {
       });
     });
 
-    // Update the corresponding entry in StopTimeData for the resumed time
     const updateStopTimeQuery = `
-      UPDATE StopTimeData
-      SET is_resume = true
-      WHERE checkin_id = ? AND stop_time = ?
-    `;
+  UPDATE StopTimeData
+  SET is_resume = true, resumetime = NOW()
+  WHERE checkin_id = ?
+`;
 
     await new Promise((resolve, reject) => {
       connection.query(
         updateStopTimeQuery,
-        [checkin_id, stopTime],
+        [checkin_id],
         (err, results, fields) => {
           if (err) {
             console.error(err.message);
@@ -657,11 +623,35 @@ const CheckOut = async (req, res, next) => {
 
     const { email, userId } = decoded;
 
-    const updateQuery = `
-       UPDATE checkinout
-      SET checkout_time = NOW(),
-          total_hours = IFNULL(TIMESTAMPDIFF(SECOND, start_time, NOW()) / 3600, 0)
+    // Fetch the current check-in record for the user
+    const checkinQuery = `
+      SELECT checkin_id, start_time
+      FROM checkinout
       WHERE user_id = ? AND checkout_time IS NULL
+    `;
+
+    const checkinResult = await new Promise((resolve, reject) => {
+      connection.query(checkinQuery, [userId], (err, results, fields) => {
+        if (err) {
+          console.error(err.message);
+          reject(err);
+        } else {
+          resolve(results[0]);
+        }
+      });
+    });
+
+    if (!checkinResult) {
+      throw new CustomError("No active check-in found", 1004, false, 400);
+    }
+
+    const { checkin_id, start_time } = checkinResult;
+
+    const updateQuery = `
+      UPDATE checkinout
+SET checkout_time = NOW(),
+    total_hours = IFNULL(TIMESTAMPDIFF(MINUTE, start_time, NOW()), 0)
+WHERE user_id = ? AND checkout_time IS NULL;
     `;
 
     await new Promise((resolve, reject) => {
@@ -673,6 +663,27 @@ const CheckOut = async (req, res, next) => {
           resolve(results);
         }
       });
+    });
+
+    const updateStopTimeQuery = `
+  UPDATE StopTimeData
+  SET is_resume = true, resumetime = NOW()
+  WHERE checkin_id = ?
+`;
+
+    await new Promise((resolve, reject) => {
+      connection.query(
+        updateStopTimeQuery,
+        [checkin_id],
+        (err, results, fields) => {
+          if (err) {
+            console.error(err.message);
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        }
+      );
     });
 
     res.status(200).json({ success: true, message: "Check-out successful" });

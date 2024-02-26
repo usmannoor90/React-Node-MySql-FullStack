@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 
 import { useDispatch, useSelector } from "react-redux";
 import { setBreak, setCheckin } from "../State/AuthSlice";
+import { toast } from "react-toastify";
 
 function Home() {
   const {
@@ -18,6 +19,7 @@ function Home() {
     DashboardAPI.POSTCheckIn(d)
       .then((res) => {
         dispatch(setCheckin({ checkin_time: res.data.data.checkin_time }));
+        toast.success(`you are checking in from ${d}`);
       })
       .catch((err) => {});
   };
@@ -26,6 +28,8 @@ function Home() {
     DashboardAPI.POSTCheckOUT()
       .then((res) => {
         dispatch(setCheckin({ checkintime: null }));
+        dispatch(setBreak({ isbreak: true }));
+        toast.success(`you are checked out successfully!!!`);
       })
       .catch((err) => {});
     DashboardAPI.POSTresumetime()
@@ -39,6 +43,7 @@ function Home() {
     DashboardAPI.POSTstoptime(d)
       .then((res) => {
         dispatch(setBreak({ isbreak: true }));
+        toast.success(res.data.message);
       })
       .catch((err) => {});
   };
@@ -47,19 +52,24 @@ function Home() {
     DashboardAPI.POSTresumetime()
       .then((res) => {
         dispatch(setBreak({ isbreak: false }));
+        toast.success(res.data.message);
       })
       .catch((err) => {});
   };
 
-  const { checkin_time, isbreak } = useSelector((state) => state.auth);
+  const { checkin_time, checkout_time, isbreak } = useSelector(
+    (state) => state.auth
+  );
 
   return (
     <div className=" flex items-start justify-center w-full   ">
       <div className=" w-[800px]  bg-white rounded-2xl p-10  flex items-center justify-between gap-4 ">
         <div className=" flex flex-col items-center justify-center gap-3   ">
-          <h2>{checkin_time ? checkin_time : "please check in"}</h2>
+          <h2>
+            {checkin_time && !checkout_time ? checkin_time : "please check in"}
+          </h2>
 
-          {checkin_time ? (
+          {checkin_time && !checkout_time ? (
             <button
               className=" btn btn-error   "
               onClick={() => handleChechOut()}
@@ -85,14 +95,7 @@ function Home() {
           )}
         </div>
         <div className=" flex flex-col gap-3 ">
-          {isbreak ? (
-            <button
-              className=" btn btn-info  "
-              onClick={() => handleResumeTIme()}
-            >
-              resume time(after break)
-            </button>
-          ) : (
+          {isbreak === null || isbreak === false ? (
             <>
               <form
                 action=""
@@ -118,6 +121,13 @@ function Home() {
                 {errors?.stopReason?.message}
               </div>
             </>
+          ) : (
+            <button
+              className=" btn btn-info  "
+              onClick={() => handleResumeTIme()}
+            >
+              resume time(after break)
+            </button>
           )}
         </div>
       </div>

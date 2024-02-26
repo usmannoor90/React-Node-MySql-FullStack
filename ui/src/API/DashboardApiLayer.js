@@ -25,19 +25,18 @@ export const DashboardAPI = {
       url: `user/stoptime`,
       headers: { authorization: store.getState().auth.token },
       data: {
-        stopTime: String(Date.now()),
         stopReason: d?.stopReason,
         isResume: false,
       },
     });
   },
-  POSTresumetime: function (d) {
+  POSTresumetime: function () {
     return axiosInstance.request({
       method: "POST",
       url: `user/resumetime`,
       headers: { authorization: store.getState().auth.token },
       data: {
-        stopTime: String(Date.now()),
+        isResume: true,
       },
     });
   },
@@ -64,6 +63,34 @@ export const DashboardAPI = {
       method: "GET",
       url: `user/userhistory`,
       headers: { authorization: store.getState().auth.token },
+    });
+  },
+  GetAllUser: function (d) {
+    return axiosInstance.request({
+      method: "GET",
+      url: `user/admin/allusers`,
+      headers: { authorization: store.getState().auth.token },
+    });
+  },
+  AddUser: function (d) {
+    // console.log(d?.dateofjoining);
+    const currentTimestamp = new Date().toISOString().split(".")[0];
+    return axiosInstance.request({
+      method: "POST",
+      url: `user/admin/adduser`,
+      headers: { authorization: store.getState().auth.token },
+      data: {
+        username: d?.username,
+        email: d?.email,
+        password: d?.password,
+        title: d?.title,
+        contact: d?.contact,
+        dateofjoining: currentTimestamp,
+        previlage: d?.previlage,
+        address: d?.address,
+        country: d?.country,
+        city: d?.city,
+      },
     });
   },
 };

@@ -108,7 +108,7 @@ function Header() {
                 className={(navActive) =>
                   navActive.isActive ? "CustomDashActiveNavLink" : ""
                 }
-                to={"/dashboard/history"}
+                to={"/dashboard/employee"}
               >
                 <span className="inline-flex items-center justify-center h-12 w-12 text-lg">
                   <i className="bx bx-history"></i>

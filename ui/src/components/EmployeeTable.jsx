@@ -29,54 +29,41 @@ function EmployeeTable({ Data }) {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    columnHelper.accessor("EmployeeId", {
-      header: "Employee Id",
+    columnHelper.accessor("username", {
+      header: "user name",
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor("EmployeeName", {
-      header: "Employee Name",
+    columnHelper.accessor("email", {
+      header: "email",
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor("Departmeent", {
-      header: "Departmeent",
+    columnHelper.accessor("title", {
+      header: "title",
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor("DateOfJoining", {
+    columnHelper.accessor("dateofjoining", {
       header: "Date Of Joining",
       cell: (info) => {
         return info.getValue()?.split("T")[0];
       },
     }),
-    columnHelper.accessor("Update", {
-      cell: (info) => {
-        return (
-          <button className="flex items-center capitalize btn-accent btn text-white mx-auto">
-            <GrUpdate className=" " size={18} />
-            update
-          </button>
-        );
-      },
+    columnHelper.accessor("city", {
+      header: "city",
+      cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor("Delete", {
-      cell: (info) => {
-        return (
-          <button
-            className="flex items-center capitalize btn-error btn text-white mx-auto"
-            onClick={() => handleDeleteEmployee(info.row.original)}
-          >
-            <MdOutlineDeleteOutline className="" size={25} />
-            Delete
-          </button>
-        );
-      },
+    columnHelper.accessor("country", {
+      header: "country",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("address", {
+      header: "address",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("contact", {
+      header: "contact",
+      cell: (info) => info.getValue(),
     }),
   ];
-
-  const { token } = useSelector((state) => state.auth);
-
-  const handleDeleteEmployee = async (data) => {
-    console.log(data);
-  };
 
   const table = useReactTable({
     data,

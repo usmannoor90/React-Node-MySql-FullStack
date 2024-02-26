@@ -17,6 +17,7 @@ const initialState = {
   isbreak: null,
   Profile: {},
   userhistory: [],
+  AllUsers: [],
 };
 
 export const authSlice = createSlice({
@@ -66,6 +67,9 @@ export const authSlice = createSlice({
     setuserhistory: (state, action) => {
       state.userhistory = action.payload.userhistory;
     },
+    setAllUser: (state, action) => {
+      state.AllUsers = action.payload.AllUsers;
+    },
   },
 });
 
@@ -77,6 +81,7 @@ export const {
   setCheckin,
   setProfileData,
   setuserhistory,
+  setAllUser,
 } = authSlice.actions;
 
 export default authSlice.reducer;
